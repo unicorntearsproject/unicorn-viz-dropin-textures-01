@@ -211,14 +211,20 @@ class TextureShowcase(BaseEffect):
         tex_a.use(location=0)
         tex_b.use(location=1)
 
-        self._prog["texA"].value = 0
-        self._prog["texB"].value = 1
-        self._prog["iTime"].value = self.time
-        self._prog["iBass"].value = self._bass
-        self._prog["iMid"].value = self._mid
-        self._prog["iTreble"].value = self._treble
-        self._prog["iMix"].value = self._mix
-        self._prog["iResolution"].value = (float(self.width), float(self.height))
+        def set_uniform(name: str, value) -> None:
+            try:
+                self._prog[name].value = value
+            except KeyError:
+                pass
+
+        set_uniform("texA", 0)
+        set_uniform("texB", 1)
+        set_uniform("iTime", self.time)
+        set_uniform("iBass", self._bass)
+        set_uniform("iMid", self._mid)
+        set_uniform("iTreble", self._treble)
+        set_uniform("iMix", self._mix)
+        set_uniform("iResolution", (float(self.width), float(self.height)))
 
         self._vao.render(moderngl.TRIANGLE_STRIP)
 
