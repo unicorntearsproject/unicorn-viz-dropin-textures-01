@@ -6,6 +6,8 @@ A drop-in effect for [unicorn-viz](https://github.com/iDoMeteor/unicorn-viz).
 
 Loads image assets from configurable directories and presents them in an animated, audio-reactive montage with pan/zoom, colour grading, and filmic post-processing. Works as a live wallpaper engine that reacts to music.
 
+Also includes `Prism Storm`, a separate drop-in effect with a spinning crystal core, refractive beams, and electric haze.
+
 ## Visual Features
 
 - Smooth pan/zoom Ken Burns motion on each image
@@ -13,6 +15,7 @@ Loads image assets from configurable directories and presents them in an animate
 - Beat-triggered cross-dissolve between images
 - Configurable asset directories — point at any folder of images
 - Vignette and light-leak post-processing
+- Prism Storm crystal core + refractive laser effect
 
 ## Audio Reactivity
 
@@ -42,3 +45,5 @@ No dedicated hotkeys.  Standard `+`/`-` adjust `speed`.
 ## Tags
 
 `textures` · `audio` · `modern` · `drop-in`
+
+`Prism Storm` uses the same drop-in repo and will appear as a separate playlist effect alongside `Texture Showcase`.
