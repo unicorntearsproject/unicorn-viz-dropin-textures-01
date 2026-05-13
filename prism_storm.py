@@ -252,9 +252,9 @@ class PrismStorm(BaseEffect):
     def _init(self) -> None:
         self.parameters = {
             'speed': 1.0,
-            'shard_count': 7.0,
-            'glow': 1.0,
-            'beam_count': 4.0,
+            'shard_count': float(self.rng.integers(5, 11)),
+            'glow': float(self.rng.uniform(0.7, 1.4)),
+            'beam_count': float(self.rng.integers(3, 7)),
         }
 
         self._prog = self._make_program(_VERT, _FRAG)

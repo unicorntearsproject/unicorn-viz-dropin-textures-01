@@ -183,9 +183,10 @@ class TextureShowcase(BaseEffect):
             tex = self.ctx.texture((1, 1), 3, bytes([255, 0, 255]))
             tex.filter = moderngl.LINEAR, moderngl.LINEAR
             self._textures = [tex]
-        self._current = 0
-        self._next = 1 if len(self._textures) > 1 else 0
-        log.info("TextureShowcase: loaded %d textures", len(self._textures))
+        n = len(self._textures)
+        self._current = int(self.rng.integers(0, n))
+        self._next = (self._current + 1) % n if n > 1 else 0
+        log.info("TextureShowcase: loaded %d textures", n)
 
     def update(self, dt: float, audio: AudioData) -> None:
         super().update(dt, audio)
