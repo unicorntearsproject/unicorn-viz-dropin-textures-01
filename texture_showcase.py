@@ -36,6 +36,7 @@ uniform float iMid;
 uniform float iTreble;
 uniform float iMix;
 uniform vec2  iResolution;
+uniform float iZoom;
 in vec2 v_uv;
 out vec4 fragColor;
 
@@ -72,6 +73,7 @@ vec3 sampleWarped(sampler2D tex, vec2 uv, float t, float amp, float phase) {
 
 void main() {
     vec2 uv = v_uv;
+    uv = (uv - 0.5) / max(iZoom, 0.01) + 0.5;
     float t = iTime;
 
     vec2 panA = vec2(sin(t * 0.31), cos(t * 0.27)) * (0.05 + iBass * 0.03);
@@ -114,6 +116,7 @@ class TextureShowcase(BaseEffect):
         self.parameters = {
             "speed": 1.0,
             "mix_time": 7.0,
+            "zoom": 1.0,
         }
 
         self._prog = self._make_program(_VERT, _FRAG)
@@ -226,6 +229,7 @@ class TextureShowcase(BaseEffect):
         set_uniform("iTreble", self._treble)
         set_uniform("iMix", self._mix)
         set_uniform("iResolution", (float(self.width), float(self.height)))
+        set_uniform("iZoom", float(self.parameters["zoom"]))
 
         self._vao.render(moderngl.TRIANGLE_STRIP)
 

@@ -31,6 +31,7 @@ uniform float iSpeed;
 uniform float iShardCount;
 uniform float iGlow;
 uniform float iBeamCount;
+uniform float iZoom;
 
 in vec2 v_uv;
 out vec4 fragColor;
@@ -187,6 +188,7 @@ vec3 shade(vec3 ro, vec3 rd, vec3 p, float matId, vec3 n) {
 void main() {
     vec2 uv = v_uv * 2.0 - 1.0;
     uv.x *= iResolution.x / max(iResolution.y, 1.0);
+    uv /= max(iZoom, 0.01);
     float t = iTime * iSpeed;
 
     vec3 ro = vec3(
@@ -256,6 +258,7 @@ class PrismStorm(BaseEffect):
             'shard_count': float(self.rng.integers(5, 11)),
             'glow': float(self.rng.uniform(0.7, 1.4)),
             'beam_count': float(self.rng.integers(3, 7)),
+            'zoom': 1.0,
         }
 
         self._prog = self._make_program(_VERT, _FRAG)
@@ -287,6 +290,7 @@ class PrismStorm(BaseEffect):
         self._set('iShardCount', max(5.0, self.parameters['shard_count']))
         self._set('iGlow', max(0.0, self.parameters['glow']))
         self._set('iBeamCount', max(1.0, self.parameters['beam_count']))
+        self._set('iZoom', max(0.1, self.parameters['zoom']))
         self._vao.render(moderngl.TRIANGLE_STRIP)
 
     def destroy(self) -> None:
