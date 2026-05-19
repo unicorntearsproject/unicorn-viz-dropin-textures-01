@@ -114,9 +114,9 @@ class TextureShowcase(BaseEffect):
 
     def _init(self) -> None:
         self.parameters = {
-            "speed": 1.0,
-            "mix_time": 7.0,
-            "zoom": 1.0,
+            "speed": float(self.config.get("speed", 1.0)),
+            "mix_time": float(self.config.get("mix_time", 7.0)),
+            "zoom": float(self.config.get("zoom", 1.0)),
         }
 
         self._prog = self._make_program(_VERT, _FRAG)
