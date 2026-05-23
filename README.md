@@ -47,3 +47,8 @@ No dedicated hotkeys.  Standard `+`/`-` adjust `speed`.
 `textures` · `audio` · `modern` · `drop-in`
 
 `Prism Storm` uses the same drop-in repo and will appear as a separate playlist effect alongside `Texture Showcase`.
+
+## 2026-05-22 Update
+
+- `Prism Storm` now uses normalized band dynamics (`bass_n/mid_n/treble_n`) for smoother audio-reactive intensity.
+- `Texture Showcase` remains intentionally gentle/ambient and keeps its existing response profile.
