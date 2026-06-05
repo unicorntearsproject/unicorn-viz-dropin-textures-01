@@ -1,8 +1,7 @@
-"""Prism Storm drop-in effect.
+"""Prism Lattice drop-in effect.
 
-An audio-reactive crystal storm that spins a refractive core, slashes the
-scene with laser arcs, and paints the screen with dispersion, sparks, and
-electric fog.
+An audio-reactive crystal lattice that spins a refractive core and paints the
+scene with prism facets, laser arcs, and electric haze.
 """
 from __future__ import annotations
 
@@ -203,7 +202,7 @@ void main() {
     vec3 rd = normalize(fwd + uv.x * rgt + uv.y * up);
 
     // Small camera drift and a beat-reactive kick.
-    ro += vec3(sin(t * 0.35), cos(t * 0.29), 0.0) * (0.08 + 0.06 * iBass);
+    ro += vec3(sin(t * 0.35), cos(t * 0.29), 0.0) * (0.06 + 0.04 * iBass);
 
     float total = 0.0;
     float matId = 0.0;
@@ -226,11 +225,14 @@ void main() {
         vec3 n = calcNormal(p);
         col = shade(ro, rd, p, matId, n);
     } else {
-        // Background sky / plasma haze.
+        // Background sky + prism lattice haze.
         float horizon = smoothstep(-0.2, 0.8, rd.y);
         col = mix(vec3(0.02, 0.02, 0.05), vec3(0.08, 0.0, 0.12), horizon);
         col += 0.06 * palette(t * 0.05 + uv.y * 0.1 + uv.x * 0.05);
         col += 0.03 * vec3(0.2, 0.9, 1.0) * pow(max(0.0, 1.0 - length(uv)), 2.0);
+        vec2 l = abs(fract(uv * 7.0) - 0.5);
+        float facet = smoothstep(0.49, 0.42, max(l.x, l.y));
+        col += palette(t * 0.03 + uv.x * 0.2 - uv.y * 0.2) * facet * 0.08;
     }
 
     // Audio-driven bloom / saturation push.
@@ -245,11 +247,11 @@ void main() {
 
 
 class PrismStorm(BaseEffect):
-    """Audio-reactive crystal storm with refractive beams and electric haze."""
+    """Audio-reactive prism lattice with refractive beams and electric haze."""
 
-    NAME = 'Prism Storm'
+    NAME = 'Prism Lattice'
     AUTHOR = 'unicorn-viz drop-in'
-    TAGS = ['crystal', 'prism', 'storm', 'audio', 'drop-in']
+    TAGS = ['crystal', 'prism', 'lattice', 'audio', 'drop-in']
     PING_PONG_FRIENDS = ['Unicorn Tears', 'Kaleidoscope']
 
     def _init(self) -> None:
