@@ -252,7 +252,22 @@ class PrismStorm(BaseEffect):
     NAME = 'Prism Lattice'
     AUTHOR = 'unicorn-viz drop-in'
     TAGS = ['crystal', 'prism', 'lattice', 'audio', 'drop-in']
-    PING_PONG_FRIENDS = ['Unicorn Tears', 'Kaleidoscope']
+    PING_PONG_FRIENDS = [
+        'Unicorn Tears',
+        'Kaleidoscope',
+        'Copper Bars',
+        'Hexy Stars',
+        'Metaballs',
+        'Plasma',
+        'Psychedelic',
+        'Sine Scroller 3.1',
+        'Tunnel',
+        'Van Gogh',
+        'Wavey Gravy',
+        'Tron Grid',
+        'Hacker Terminal',
+        'Cyber War',
+    ]
 
     def _init(self) -> None:
         self.parameters = {
