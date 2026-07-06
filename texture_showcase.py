@@ -110,7 +110,7 @@ void main() {
 class TextureShowcase(BaseEffect):
     NAME = "Texture Showcase"
     AUTHOR = "unicorn-viz drop-in"
-    TAGS = ["media", "textures", "modern"]
+    TAGS = ['media', 'textures', 'modern', 'groovy']
 
     def _init(self) -> None:
         self.parameters = {
