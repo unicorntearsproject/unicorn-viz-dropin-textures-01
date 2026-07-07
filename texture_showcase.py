@@ -16,6 +16,33 @@ from unicornviz.effects.base import BaseEffect, AudioData
 
 log = logging.getLogger(__name__)
 
+_TEXTURE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tga"}
+
+
+def scan_groups(root: Path) -> list[list[Path]]:
+    """Directory-group playback: each subdirectory containing textures is one
+    group; all loose textures directly in ``root`` form one shared group.
+    Returns a list of non-empty groups (empty when none). Pure/testable."""
+    if not root.exists() or not root.is_dir():
+        return []
+    groups: list[list[Path]] = []
+    loose: list[Path] = []
+    for entry in sorted(root.iterdir(), key=lambda p: p.name.lower()):
+        if entry.is_dir():
+            texs = sorted(
+                (p for p in entry.rglob("*")
+                 if p.is_file() and p.suffix.lower() in _TEXTURE_EXTS),
+                key=lambda p: str(p).lower(),
+            )
+            if texs:
+                groups.append(texs)
+        elif entry.is_file() and entry.suffix.lower() in _TEXTURE_EXTS:
+            loose.append(entry)
+    if loose:
+        groups.append(loose)
+    return groups
+
+
 _VERT = """
 #version 330
 in vec2 in_vert;
@@ -123,6 +150,8 @@ class TextureShowcase(BaseEffect):
         self._vao, self._vbo = self._fullscreen_quad(self._prog)
 
         self._textures: list[moderngl.Texture] = []
+        self._group_order: list[int] = []
+        self._order_pos = 0
         self._current = 0
         self._next = 1
         self._timer = 0.0
@@ -153,26 +182,26 @@ class TextureShowcase(BaseEffect):
         return uniq
 
     def _load_textures(self) -> None:
-        exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tga"}
-        files: list[Path] = []
+        # Build directory groups across all texture dirs (each subdir is a group;
+        # loose textures per dir form that dir's shared group), then play just
+        # one randomly chosen group for this activation.
+        groups: list[list[Path]] = []
         for d in self._texture_dirs():
-            if not d.exists():
-                continue
-            for p in sorted(d.iterdir()):
-                if p.is_file() and p.suffix.lower() in exts:
-                    files.append(p)
+            groups.extend(scan_groups(d))
 
-        if not files:
+        if not groups:
             log.warning("TextureShowcase: no textures found")
-            # fallback 1x1 magenta so effect still renders
             tex = self.ctx.texture((1, 1), 3, bytes([255, 0, 255]))
             tex.filter = moderngl.LINEAR, moderngl.LINEAR
             self._textures = [tex]
+            self._group_order = [0]
+            self._order_pos = 0
             self._current = 0
             self._next = 0
             return
 
-        for path in files:
+        gi = int(self.rng.integers(len(groups)))
+        for path in groups[gi]:
             try:
                 img = Image.open(path).convert("RGB")
                 tex = self.ctx.texture(img.size, 3, img.tobytes())
@@ -187,9 +216,27 @@ class TextureShowcase(BaseEffect):
             tex.filter = moderngl.LINEAR, moderngl.LINEAR
             self._textures = [tex]
         n = len(self._textures)
-        self._current = int(self.rng.integers(0, n))
-        self._next = (self._current + 1) % n if n > 1 else 0
-        log.info("TextureShowcase: loaded %d textures", n)
+        self._group_order = [int(i) for i in self.rng.permutation(n)]
+        self._order_pos = 0
+        self._current = self._group_order[0]
+        self._next = self._group_order[1 % n]
+        log.info("TextureShowcase: group %d/%d (%d textures)", gi + 1, len(groups), n)
+
+    def _advance_group(self) -> None:
+        """Advance to the next texture in the shuffled group (reshuffle on wrap)."""
+        if not self._group_order:
+            return
+        self._order_pos += 1
+        if self._order_pos >= len(self._group_order):
+            self._order_pos = 0
+            if len(self._group_order) > 1:
+                last = self._group_order[-1]
+                self._group_order = [int(i) for i in self.rng.permutation(self._group_order)]
+                if self._group_order[0] == last:
+                    self._group_order[0], self._group_order[-1] = (
+                        self._group_order[-1], self._group_order[0])
+        self._current = self._group_order[self._order_pos]
+        self._next = self._group_order[(self._order_pos + 1) % len(self._group_order)]
 
     def update(self, dt: float, audio: AudioData) -> None:
         super().update(dt, audio)
@@ -203,9 +250,8 @@ class TextureShowcase(BaseEffect):
 
         if phase >= 1.0:
             self._timer = 0.0
-            self._current = self._next
-            self._next = (self._next + 1) % len(self._textures)
             self._mix = 0.0
+            self._advance_group()
         else:
             self._mix = phase
 
