@@ -1,6 +1,6 @@
 # textures-01 — Texture Showcase
 
-**Version 0.8.0**
+**Version 0.9.0**
 
 
 A drop-in effect for [unicorn-viz](https://github.com/iDoMeteor/unicorn-viz).
@@ -55,4 +55,11 @@ No dedicated hotkeys.  Standard `+`/`-` adjust `speed`.
 
 ## Changelog
 
+- **0.9.0** — added 12 real high-resolution space photographs (nebulae,
+  galaxies, star clusters, solar flares, planetary imagery) from the NASA
+  Image and Video Library — public domain (CC0), sourced via the
+  `images-api.nasa.gov` REST API. See `assets/textures/SOURCES.md` for
+  provenance. The prior 20-image set was entirely flat procedural patterns
+  (checkers, dots, stripes); this gives the montage real photographic depth
+  and variety alongside the geometric set.
 - **0.8.0** — initial versioned release.
