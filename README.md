@@ -1,5 +1,8 @@
 # textures-01 — Texture Showcase
 
+**Version 0.8.0**
+
+
 A drop-in effect for [unicorn-viz](https://github.com/iDoMeteor/unicorn-viz).
 
 ## Description
@@ -49,3 +52,7 @@ No dedicated hotkeys.  Standard `+`/`-` adjust `speed`.
 
 > Note: the former `Prism Storm` effect that shipped in this repo has moved to
 > `immersive-01` and is now named `Wormhole`.
+
+## Changelog
+
+- **0.8.0** — initial versioned release.
